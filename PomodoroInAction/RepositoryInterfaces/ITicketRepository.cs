@@ -3,7 +3,7 @@ using PomodoroInAction.Repositories;
 
 namespace PomodoroInAction.RepositoryInterfaces
 {
-    public interface IBoardRepository : IBaseRepository<Board>
+    interface ITicketRepository : IBaseRepository<Ticket>
     {
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PomodoroInAction.Models
 {
     [Table("container")]
-    public class Container : BaseEntity
+    public class KanbanContainer : BaseEntity
     {
         public string DisplayName { get; set; }
         public string Description { get; set; }

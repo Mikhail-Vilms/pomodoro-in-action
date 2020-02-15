@@ -9,6 +9,6 @@ namespace PomodoroInAction.Models
         public string DisplayName { get; set; }
         public string Description { get; set; }
         public int SortOrder { get; set; }
-        public ICollection<Container> Containers { get; set; }
+        public ICollection<KanbanContainer> Containers { get; set; }
     }
 }

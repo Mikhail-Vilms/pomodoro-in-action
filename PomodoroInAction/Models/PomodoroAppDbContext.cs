@@ -10,6 +10,6 @@ namespace PomodoroInAction.Models
 
         public DbSet<Board> Boards { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
-        public DbSet<Container> Containers { get; set; }
+        public DbSet<KanbanContainer> Containers { get; set; }
     }
 }
