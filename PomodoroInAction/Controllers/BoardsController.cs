@@ -2,6 +2,7 @@
 using PomodoroInAction.Models;
 using PomodoroInAction.Repositories;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PomodoroInAction.Controllers
 {
@@ -18,38 +19,39 @@ namespace PomodoroInAction.Controllers
 
         // GET: api/boards
         [HttpGet]
-        public IEnumerable<Board> GetBoards()
+        public async Task<ActionResult<IEnumerable<Board>>> GetAll()
         {
-            return _unitOfWork.Board.GetAll();
+            IEnumerable<Board> boards = await _unitOfWork.Board.GetAll();
+            return Ok(boards);
         }
 
         // GET: api/boards/5
         [HttpGet("{id}")]
-        public ActionResult<Board> GetBoard(int id)
+        public async Task<ActionResult<Board>> Get(int id)
         {
-            Board board = _unitOfWork.Board.GetById(id);
+            Board board = await _unitOfWork.Board.GetById(id);
 
             if (board == null)
             {
                 return NotFound();
             }
 
-            return board;
+            return Ok(board);
         }
 
         // POST: api/boards
         [HttpPost]
-        public ActionResult<Board> PostBoard(Board board)
+        public ActionResult<Board> Post([FromBody] Board board)
         {
-            _unitOfWork.Board.Insert(board);
+            _unitOfWork.Board.Create(board);
             _unitOfWork.Save();
 
-            return CreatedAtAction(nameof(GetBoard), new { id = board.Id }, board);
+            return CreatedAtAction(nameof(Get), new { id = board.Id }, board);
         }
 
         // PUT: api/boards/5
         [HttpPut("{id}")]
-        public IActionResult PutBoard(int id, Board board)
+        public IActionResult Put(int id, Board board)
         {
             if (id != board.Id)
             {
@@ -59,14 +61,14 @@ namespace PomodoroInAction.Controllers
             _unitOfWork.Board.Update(board);
             _unitOfWork.Save();
 
-            return NoContent();
+            return Ok();
         }
 
         // DELETE: api/boards/5
         [HttpDelete("{id}")]
-        public ActionResult<Board> DeleteBoard(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            Board board = _unitOfWork.Board.GetById(id);
+            Board board = await _unitOfWork.Board.GetById(id);
             
             if (board == null)
             {
@@ -76,7 +78,7 @@ namespace PomodoroInAction.Controllers
             _unitOfWork.Board.Delete(board);
             _unitOfWork.Save();
 
-            return board;
+            return Ok();
         }
     }
 }      

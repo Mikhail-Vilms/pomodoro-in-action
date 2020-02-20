@@ -7,14 +7,18 @@ namespace PomodoroInAction.Repositories
     {
         private PomodoroAppDbContext _dbContext;
         private BoardRepository _board;
+        private ContainerRepository _containers;
+        private TicketRepository _tickets;
 
         public UnitOfWork(PomodoroAppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public IBoardRepository Board {
-            get {
+        public IBoardRepository Board
+        {
+            get
+            {
                 if (_board == null)
                 {
                     _board = new BoardRepository(_dbContext);
@@ -24,9 +28,35 @@ namespace PomodoroInAction.Repositories
             }
         }
 
+        public IContainerRepository Containers
+        {
+            get
+            {
+                if (_containers == null)
+                {
+                    _containers = new ContainerRepository(_dbContext);
+                }
+
+                return _containers;
+            }
+        }
+
+        public ITicketRepository Tickets
+        {
+            get
+            {
+                if (_tickets == null)
+                {
+                    _tickets = new TicketRepository(_dbContext);
+                }
+
+                return _tickets;
+            }
+        }
+
         public void Save()
         {
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
         }
     }
 }
