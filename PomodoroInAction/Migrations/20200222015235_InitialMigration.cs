@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace PomodoroInAction.Migrations
 {
-    public partial class InitialSchema : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,70 +11,70 @@ namespace PomodoroInAction.Migrations
                 name: "board",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    DisplayName = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    SortOrder = table.Column<int>(nullable: false)
+                    display_name = table.Column<string>(nullable: false),
+                    description = table.Column<string>(nullable: true),
+                    sort_order = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_board", x => x.Id);
+                    table.PrimaryKey("PK_board", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "container",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    DisplayName = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    SortOrder = table.Column<int>(nullable: false),
-                    BoardId = table.Column<int>(nullable: true)
+                    display_name = table.Column<string>(nullable: false),
+                    sort_order = table.Column<int>(nullable: false),
+                    board_id = table.Column<int>(nullable: false),
+                    description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_container", x => x.Id);
+                    table.PrimaryKey("PK_container", x => x.id);
                     table.ForeignKey(
-                        name: "FK_container_board_BoardId",
-                        column: x => x.BoardId,
+                        name: "FK_container_board_board_id",
+                        column: x => x.board_id,
                         principalTable: "board",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ticket",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    DisplayName = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    SortOrder = table.Column<int>(nullable: false),
-                    ContainerId = table.Column<int>(nullable: true)
+                    display_name = table.Column<string>(nullable: false),
+                    description = table.Column<string>(nullable: true),
+                    container_id = table.Column<int>(nullable: false),
+                    sort_order = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ticket", x => x.Id);
+                    table.PrimaryKey("PK_ticket", x => x.id);
                     table.ForeignKey(
-                        name: "FK_ticket_container_ContainerId",
-                        column: x => x.ContainerId,
+                        name: "FK_ticket_container_container_id",
+                        column: x => x.container_id,
                         principalTable: "container",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_container_BoardId",
+                name: "IX_container_board_id",
                 table: "container",
-                column: "BoardId");
+                column: "board_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ticket_ContainerId",
+                name: "IX_ticket_container_id",
                 table: "ticket",
-                column: "ContainerId");
+                column: "container_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
