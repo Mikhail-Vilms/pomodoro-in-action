@@ -11,8 +11,7 @@ namespace PomodoroInActionTests.IntegrationTests
         protected readonly HttpClient TestClient;
 
         public IntegrationTest()
-        {
-            
+        {   
             var appFactory = new WebApplicationFactory<Startup>();
             TestClient = appFactory.CreateClient();
         }
