@@ -219,6 +219,27 @@ namespace PomodoroInAction.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("PomodoroInAction.Models.AppUserBoard", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnName("user_id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("BoardId")
+                        .HasColumnName("board_id")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnName("is_owner")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("AppUserId", "BoardId");
+
+                    b.HasIndex("BoardId");
+
+                    b.ToTable("user_board");
+                });
+
             modelBuilder.Entity("PomodoroInAction.Models.Board", b =>
                 {
                     b.Property<int>("Id")
@@ -229,12 +250,22 @@ namespace PomodoroInAction.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnName("description")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(300)")
+                        .HasMaxLength(300);
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasColumnName("display_name")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnName("is_archived")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnName("is_public")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("SortOrder")
                         .HasColumnName("sort_order")
@@ -363,6 +394,21 @@ namespace PomodoroInAction.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PomodoroInAction.Models.AppUserBoard", b =>
+                {
+                    b.HasOne("PomodoroInAction.Models.AppUser", "AppUser")
+                        .WithMany("AppUserBoards")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PomodoroInAction.Models.Board", "Board")
+                        .WithMany("AppUserBoards")
+                        .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -10,9 +10,9 @@ namespace PomodoroInAction.Controllers
     [ApiController]
     public class ContainersController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IDBTransaction _unitOfWork;
 
-        public ContainersController(IUnitOfWork unitOfWork)
+        public ContainersController(IDBTransaction unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PomodoroInAction.Models;
-using PomodoroInAction.Repositories;
+using PomodoroInAction.ServiceInterfaces;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PomodoroInAction.Controllers
@@ -10,26 +13,42 @@ namespace PomodoroInAction.Controllers
     [ApiController]
     public class BoardsController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IBoardService _service;
 
-        public BoardsController(IUnitOfWork unitOfWork)
+        public BoardsController(IBoardService boardService)
         {
-            _unitOfWork = unitOfWork;
+            _service = boardService;
+        }
+
+        [HttpPost]
+        [Authorize]
+        public ActionResult<Board> Post([FromBody] Board newBoard)
+        {
+            string userId = User.Claims.First(c => c.Type == "UserID").Value;
+            Debug.WriteLine("**** userId: " + userId);
+
+            _service.CreateNewBoard(newBoard, userId);
+
+            return Ok();
+            // return CreatedAtAction(nameof(Get), new { id = board.Id }, board);
         }
 
         // GET: api/boards
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Board>>> GetAll()
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Board>>> GetPersonalBoards()
         {
-            IEnumerable<Board> boards = await _unitOfWork.Board.GetAll();
-            return Ok(boards);
+            string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+            return Ok(await _service.GetPersonalBoards(userId));
         }
 
+                /*
         // GET: api/boards/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Board>> Get(int id)
         {
-            Board board = await _unitOfWork.Board.GetById(id);
+            Board board = await _transaction.Board.GetById(id);
 
             if (board == null)
             {
@@ -39,15 +58,7 @@ namespace PomodoroInAction.Controllers
             return Ok(board);
         }
 
-        // POST: api/boards
-        [HttpPost]
-        public ActionResult<Board> Post([FromBody] Board board)
-        {
-            _unitOfWork.Board.Create(board);
-            _unitOfWork.Save();
 
-            return CreatedAtAction(nameof(Get), new { id = board.Id }, board);
-        }
 
         // PUT: api/boards/5
         [HttpPut("{id}")]
@@ -58,8 +69,8 @@ namespace PomodoroInAction.Controllers
                 return BadRequest();
             }
 
-            _unitOfWork.Board.Update(board);
-            _unitOfWork.Save();
+            _transaction.Board.Update(board);
+            _transaction.Save();
 
             return Ok();
         }
@@ -68,17 +79,18 @@ namespace PomodoroInAction.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            Board board = await _unitOfWork.Board.GetById(id);
+            Board board = await _transaction.Board.GetById(id);
             
             if (board == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.Board.Delete(board);
-            _unitOfWork.Save();
+            _transaction.Board.Delete(board);
+            _transaction.Save();
 
             return Ok();
         }
+        */
     }
 }      

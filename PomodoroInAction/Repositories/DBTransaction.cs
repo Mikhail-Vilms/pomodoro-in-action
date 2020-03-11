@@ -3,19 +3,21 @@ using PomodoroInAction.RepositoryInterfaces;
 
 namespace PomodoroInAction.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class DBTransaction : IDBTransaction
     {
-        private PomodoroAppDbContext _dbContext;
+        private readonly PomodoroAppDbContext _dbContext;
+
         private BoardRepository _board;
+        private AppUserBoardRepo _userBoards;
         private ContainerRepository _containers;
         private TicketRepository _tickets;
-
-        public UnitOfWork(PomodoroAppDbContext dbContext)
+        
+        public DBTransaction(PomodoroAppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public IBoardRepository Board
+        public IBoardRepository Boards
         {
             get
             {
@@ -25,6 +27,19 @@ namespace PomodoroInAction.Repositories
                 }
 
                 return _board;
+            }
+        }
+
+        public IAppUserBoardRepo UserBoards
+        {
+            get
+            {
+                if (_userBoards == null)
+                {
+                    _userBoards = new AppUserBoardRepo(_dbContext);
+                }
+
+                return _userBoards;
             }
         }
 

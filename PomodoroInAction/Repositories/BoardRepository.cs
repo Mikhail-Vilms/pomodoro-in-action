@@ -1,5 +1,7 @@
 ﻿using PomodoroInAction.Models;
 using PomodoroInAction.RepositoryInterfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PomodoroInAction.Repositories
 {

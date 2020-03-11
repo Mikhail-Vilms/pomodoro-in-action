@@ -54,9 +54,11 @@ namespace PomodoroInAction.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    display_name = table.Column<string>(nullable: false),
-                    description = table.Column<string>(nullable: true),
-                    sort_order = table.Column<int>(nullable: false)
+                    display_name = table.Column<string>(maxLength: 100, nullable: false),
+                    description = table.Column<string>(maxLength: 300, nullable: true),
+                    sort_order = table.Column<int>(nullable: false),
+                    is_archived = table.Column<bool>(nullable: false),
+                    is_public = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -192,6 +194,31 @@ namespace PomodoroInAction.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_board",
+                columns: table => new
+                {
+                    board_id = table.Column<int>(nullable: false),
+                    user_id = table.Column<string>(nullable: false),
+                    is_owner = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_board", x => new { x.user_id, x.board_id });
+                    table.ForeignKey(
+                        name: "FK_user_board_AspNetUsers_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_user_board_board_board_id",
+                        column: x => x.board_id,
+                        principalTable: "board",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ticket",
                 columns: table => new
                 {
@@ -259,6 +286,11 @@ namespace PomodoroInAction.Migrations
                 name: "IX_ticket_container_id",
                 table: "ticket",
                 column: "container_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_board_board_id",
+                table: "user_board",
+                column: "board_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -282,13 +314,16 @@ namespace PomodoroInAction.Migrations
                 name: "ticket");
 
             migrationBuilder.DropTable(
+                name: "user_board");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "container");
 
             migrationBuilder.DropTable(
-                name: "container");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "board");

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using PomodoroInAction.Models;
 using PomodoroInAction.Repositories;
+using PomodoroInAction.ServiceInterfaces;
+using PomodoroInAction.Services;
 using System;
 using System.Text;
 
@@ -76,7 +78,8 @@ namespace PomodoroInAction
                 };
             });
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IDBTransaction, DBTransaction>();
+            services.AddScoped<IBoardService, BoardService>();
 
             services.AddControllers();
         }

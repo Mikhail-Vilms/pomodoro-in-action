@@ -6,6 +6,7 @@ namespace PomodoroInAction.Models
     public class BaseEntity
     {
         [Column("id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
         public int Id { get; set; }
     }
