@@ -2,11 +2,13 @@
 
 namespace PomodoroInAction.Repositories
 {
-    public interface IUnitOfWork
+    public interface IDBTransaction
     {
-        IBoardRepository Board { get; }
+        IBoardRepository Boards { get; }
+        IAppUserBoardRepo UserBoards { get; }
         IContainerRepository Containers { get; }
         ITicketRepository Tickets { get; }
+
         public void Save();
     }
 }

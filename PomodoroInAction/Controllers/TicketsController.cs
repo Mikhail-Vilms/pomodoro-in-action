@@ -10,9 +10,9 @@ namespace PomodoroInAction.Controllers
     [ApiController]
     public class TicketsController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IDBTransaction _unitOfWork;
 
-        public TicketsController(IUnitOfWork unitOfWork)
+        public TicketsController(IDBTransaction unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
