@@ -80,6 +80,8 @@ namespace PomodoroInAction
 
             services.AddScoped<IDBTransaction, DBTransaction>();
             services.AddScoped<IBoardService, BoardService>();
+            services.AddScoped<IContainerService, ContainerService>();
+            services.AddScoped<ITicketService, TicketService>();
 
             services.AddControllers();
         }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PomodoroInAction.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PomodoroInAction.Repositories
@@ -23,11 +22,6 @@ namespace PomodoroInAction.Repositories
             _dbContext.SaveChanges();
         }
 
-        public async virtual Task<IEnumerable<TEntity>> GetAll()
-        {
-            return await _dbSet.ToListAsync();
-        }
-
         public async virtual Task<TEntity> GetById(int id)
         {
             return await _dbSet.FindAsync(id);
@@ -38,16 +32,6 @@ namespace PomodoroInAction.Repositories
             _dbSet.Attach(entityToUpdate);
             _dbContext.Entry(entityToUpdate).State = EntityState.Modified;
             _dbContext.SaveChanges();
-        }
-
-        public virtual void Delete(TEntity entityToDelete)
-        {
-            if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
-            {
-                _dbSet.Attach(entityToDelete);
-            }
-
-            _dbSet.Remove(entityToDelete);
         }
     }
 }

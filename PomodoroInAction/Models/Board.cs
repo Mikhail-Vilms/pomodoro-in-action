@@ -29,7 +29,7 @@ namespace PomodoroInAction.Models
         [Required]
         public bool IsPublic { get; set; } = false;
 
-        [JsonIgnore]
+        
         public ICollection<KanbanContainer> Containers { get; set; }
         [JsonIgnore]
         public ICollection<AppUserBoard> AppUserBoards { get; set; }

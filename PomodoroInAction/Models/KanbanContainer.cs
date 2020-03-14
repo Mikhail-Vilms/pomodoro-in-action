@@ -11,6 +11,9 @@ namespace PomodoroInAction.Models
         [Required]
         public string DisplayName { get; set; }
 
+        [Column("description")]
+        public string Description { get; set; }
+
         [Column("sort_order")]
         [Required]
         public int SortOrder { get; set; }
@@ -18,9 +21,6 @@ namespace PomodoroInAction.Models
         [Column("board_id")]
         [Required]
         public int BoardId { get; set; }
-
-        [Column("description")]
-        public string Description { get; set; }
 
         public ICollection<Ticket> Tickets { get; set; }
     }

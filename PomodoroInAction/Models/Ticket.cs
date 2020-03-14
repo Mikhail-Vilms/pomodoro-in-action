@@ -14,11 +14,11 @@ namespace PomodoroInAction.Models
         public string Description { get; set; }
 
         [Required]
-        [Column("container_id")]
-        public int KanbanContainerId { get; set; }
-
-        [Required]
         [Column("sort_order")]
         public int SortOrder { get; set; }
+
+        [Required]
+        [Column("container_id")]
+        public int KanbanContainerId { get; set; }
     }
 }

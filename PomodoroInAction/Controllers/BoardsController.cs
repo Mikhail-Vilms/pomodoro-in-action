@@ -33,7 +33,6 @@ namespace PomodoroInAction.Controllers
             // return CreatedAtAction(nameof(Get), new { id = board.Id }, board);
         }
 
-        // GET: api/boards
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Board>>> GetPersonalBoards()
@@ -43,54 +42,65 @@ namespace PomodoroInAction.Controllers
             return Ok(await _service.GetPersonalBoards(userId));
         }
 
-                /*
-        // GET: api/boards/5
+
+        [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Board>> Get(int id)
+        public async Task<ActionResult<Board>> GetKanbanBoard(int id)
         {
-            Board board = await _transaction.Board.GetById(id);
-
-            if (board == null)
-            {
-                return NotFound();
-            }
-
+            //string userId = User.Claims.First(c => c.Type == "UserID").Value;
+            Board board = await _service.GetKanbanBoard(id);
             return Ok(board);
         }
 
 
+        /*
+// GET: api/boards/5
+[HttpGet("{id}")]
+public async Task<ActionResult<Board>> Get(int id)
+{
+    Board board = await _transaction.Board.GetById(id);
 
-        // PUT: api/boards/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Board board)
-        {
-            if (id != board.Id)
-            {
-                return BadRequest();
-            }
+    if (board == null)
+    {
+        return NotFound();
+    }
 
-            _transaction.Board.Update(board);
-            _transaction.Save();
+    return Ok(board);
+}
 
-            return Ok();
-        }
 
-        // DELETE: api/boards/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
-        {
-            Board board = await _transaction.Board.GetById(id);
-            
-            if (board == null)
-            {
-                return NotFound();
-            }
 
-            _transaction.Board.Delete(board);
-            _transaction.Save();
+// PUT: api/boards/5
+[HttpPut("{id}")]
+public IActionResult Put(int id, Board board)
+{
+    if (id != board.Id)
+    {
+        return BadRequest();
+    }
 
-            return Ok();
-        }
-        */
+    _transaction.Board.Update(board);
+    _transaction.Save();
+
+    return Ok();
+}
+
+// DELETE: api/boards/5
+[HttpDelete("{id}")]
+public async Task<ActionResult> Delete(int id)
+{
+    Board board = await _transaction.Board.GetById(id);
+
+    if (board == null)
+    {
+        return NotFound();
+    }
+
+    _transaction.Board.Delete(board);
+    _transaction.Save();
+
+    return Ok();
+}
+*/
     }
 }      

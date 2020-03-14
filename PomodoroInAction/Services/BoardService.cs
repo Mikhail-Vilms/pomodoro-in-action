@@ -2,7 +2,6 @@
 using PomodoroInAction.Repositories;
 using PomodoroInAction.ServiceInterfaces;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,11 +27,14 @@ namespace PomodoroInAction.Services
         {
             IEnumerable<AppUserBoard> _userBoards = await _transaction.UserBoards.GetPersonalBoards(userId);
 
-            Debug.WriteLine(" *** 1 DisplayName: " + _userBoards.First().Board.DisplayName);
             IEnumerable<Board> boards = _userBoards.Select(userBoard => userBoard.Board);
-            Debug.WriteLine(" *** 2 DisplayName: " + boards.First().DisplayName);
-            return _userBoards.Select(userBoard => userBoard.Board);
 
+            return boards;
+        }
+
+        public async Task<Board> GetKanbanBoard(int id)
+        {
+            return await _transaction.Boards.GetKanbanBoard(id);
         }
     }
 }
