@@ -11,5 +11,7 @@ namespace PomodoroInAction.ServiceInterfaces
         public Task<IEnumerable<Board>> GetPersonalBoards(string userId);
 
         public Task<Board> GetKanbanBoard(int id);
+
+        public Task<bool> SetSortOrderForContainers(int boardId, IEnumerable<int> orderedIds);
     }
 }

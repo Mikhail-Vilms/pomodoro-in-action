@@ -16,7 +16,7 @@ namespace PomodoroInAction.Services
             _transaction = transaction;
         }
 
-        public bool CreateNewContainer(KanbanContainer container)
+        public bool Create(KanbanContainer container)
         {
             try
             {
@@ -32,9 +32,29 @@ namespace PomodoroInAction.Services
             }
         }
 
+        public async Task<KanbanContainer> Get(int id)
+        {
+            return await _transaction.Containers.GetById(id);
+        }
+
         public Task<IEnumerable<Board>> FetchContainersForBoard(string userId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> SetSortOrderForTickets(int containerId, IEnumerable<int> sortedTicketIds)
+        {
+            int _sortPosition = 0;
+                
+            foreach (int ticketId in sortedTicketIds)
+            {
+                Ticket ticket = await _transaction.Tickets.GetById(ticketId);
+                ticket.KanbanContainerId = containerId;
+                ticket.SortOrder = _sortPosition++;
+                _transaction.Tickets.Update(ticket);
+            }
+            
+            return true;
         }
     }
 }

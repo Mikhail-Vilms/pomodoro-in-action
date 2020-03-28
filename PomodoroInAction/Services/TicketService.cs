@@ -32,9 +32,9 @@ namespace PomodoroInAction.Services
             }
         }
 
-        public Task<IEnumerable<Ticket>> FetchTicketsForContainer(string containerId)
+        public async Task<Ticket> GetById(int id)
         {
-            throw new System.NotImplementedException();
+            return await _transaction.Tickets.GetById(id);
         }
     }
 }

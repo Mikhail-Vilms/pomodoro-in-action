@@ -5,6 +5,7 @@ using PomodoroInAction.Repositories;
 using PomodoroInAction.ServiceInterfaces;
 using PomodoroInAction.Services;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace PomodoroInAction.Controllers
@@ -26,33 +27,34 @@ namespace PomodoroInAction.Controllers
         {
             if (_service.CreateNewTicket(ticket))
             {
-                return Ok();
+                return CreatedAtAction(nameof(Get), new { id = ticket.Id }, ticket);
             }
             else
             {
                 return BadRequest();
             }
-            // return CreatedAtAction(nameof(Get), new { id = ticket.Id }, ticket);
         }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Ticket>> Get(int id)
+        {
+            Ticket ticket = await _service.GetById(id);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(ticket);
+        }
+
 
         //[HttpGet]
         //public async Task<ActionResult<IEnumerable<Ticket>>> GetAll()
         //{
         //    IEnumerable<Ticket> containers = await _unitOfWork.Tickets.GetAll();
         //    return Ok(containers);
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Ticket>> Get(int id)
-        //{
-        //    Ticket ticket = await _unitOfWork.Tickets.GetById(id);
-
-        //    if (ticket == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(ticket);
         //}
 
         //[HttpPut("{id}")]

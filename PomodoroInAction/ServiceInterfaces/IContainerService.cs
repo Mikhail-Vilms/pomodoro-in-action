@@ -6,8 +6,12 @@ namespace PomodoroInAction.ServiceInterfaces
 {
     public interface IContainerService
     {
-        public bool CreateNewContainer(KanbanContainer board);
+        public bool Create(KanbanContainer container);
+
+        public Task<KanbanContainer> Get(int id);
 
         public Task<IEnumerable<Board>> FetchContainersForBoard(string userId);
+
+        public Task<bool> SetSortOrderForTickets(int containerId, IEnumerable<int> sortedTicketIds);
     }
 }

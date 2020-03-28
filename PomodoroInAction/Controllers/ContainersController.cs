@@ -4,6 +4,7 @@ using PomodoroInAction.Models;
 using PomodoroInAction.Repositories;
 using PomodoroInAction.ServiceInterfaces;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace PomodoroInAction.Controllers
@@ -23,42 +24,41 @@ namespace PomodoroInAction.Controllers
         [Authorize]
         public ActionResult<KanbanContainer> Post([FromBody] KanbanContainer container)
         {
-            if (_service.CreateNewContainer(container))
+            if (_service.Create(container))
             {
-                return Ok();
+                return CreatedAtAction(nameof(GetContainer), new { id = container.Id }, container);
             }
             else
             {
                 return BadRequest();
             }
-            // return CreatedAtAction(nameof(Get), new { id = container.Id }, container);
-
         }
 
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Board>> GetContainer(int id)
+        {
+            //string userId = User.Claims.First(c => c.Type == "UserID").Value;
+            KanbanContainer container = await _service.Get(id);
+            return Ok(container);
+        }
 
+        [Authorize]
+        [HttpPost("{containerId}")]
+        [Route("{containerId}/set_sort_order")]
+        public async Task<ActionResult> SetSortOrderForTickets(
+            int containerId,
+            [FromBody] IEnumerable<int> sortedTicketIds)
+        {
+            //string userId = User.Claims.First(c => c.Type == "UserID").Value;
 
+            if (!await _service.SetSortOrderForTickets(containerId, sortedTicketIds))
+            {
+                return BadRequest("Error while setting sort order for tickets");
+            }
 
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<KanbanContainer>>> GetAll()
-        //{
-        //    IEnumerable<KanbanContainer> containers = await _unitOfWork.Containers.GetAll();
-        //    return Ok(containers);
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<KanbanContainer>> Get(int id)
-        //{
-        //    KanbanContainer container = await _unitOfWork.Containers.GetById(id);
-
-        //    if (container == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(container);
-        //}
-
-
+            return Ok();
+        }
 
         //[HttpPut("{id}")]
         //public IActionResult Put(int id, [FromBody] KanbanContainer container)

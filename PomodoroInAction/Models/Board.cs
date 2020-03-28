@@ -31,6 +31,7 @@ namespace PomodoroInAction.Models
 
         
         public ICollection<KanbanContainer> Containers { get; set; }
+
         [JsonIgnore]
         public ICollection<AppUserBoard> AppUserBoards { get; set; }
     }

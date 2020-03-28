@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PomodoroInAction.Models;
 using PomodoroInAction.ServiceInterfaces;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -25,12 +26,10 @@ namespace PomodoroInAction.Controllers
         public ActionResult<Board> Post([FromBody] Board newBoard)
         {
             string userId = User.Claims.First(c => c.Type == "UserID").Value;
-            Debug.WriteLine("**** userId: " + userId);
 
             _service.CreateNewBoard(newBoard, userId);
 
-            return Ok();
-            // return CreatedAtAction(nameof(Get), new { id = board.Id }, board);
+            return CreatedAtAction(nameof(GetKanbanBoard), new { id = newBoard.Id }, newBoard);
         }
 
         [HttpGet]
@@ -51,56 +50,58 @@ namespace PomodoroInAction.Controllers
             Board board = await _service.GetKanbanBoard(id);
             return Ok(board);
         }
+        
+        [Authorize]
+        [HttpPost("{id}")]
+        [Route("{id}/set_sort_order")]
+        public async Task<ActionResult<Board>> SetSortOrderForContainers(
+            int id, 
+            [FromBody] IEnumerable<int> orderedIds)
+        {
+            //string userId = User.Claims.First(c => c.Type == "UserID").Value;
 
+            Debug.WriteLine(" *** *** *** orderedIds: " + orderedIds);
+
+            if ( !await _service.SetSortOrderForContainers(id, orderedIds))
+            {
+                return BadRequest("Error while setting sort order for containers");
+            }
+            
+            return Ok();
+        }
 
         /*
-// GET: api/boards/5
-[HttpGet("{id}")]
-public async Task<ActionResult<Board>> Get(int id)
-{
-    Board board = await _transaction.Board.GetById(id);
+        // PUT: api/boards/5
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, Board board)
+        {
+            if (id != board.Id)
+            {
+                return BadRequest();
+            }
 
-    if (board == null)
-    {
-        return NotFound();
-    }
+            _transaction.Board.Update(board);
+            _transaction.Save();
 
-    return Ok(board);
-}
+            return Ok();
+        }
 
+        // DELETE: api/boards/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            Board board = await _transaction.Board.GetById(id);
 
+            if (board == null)
+            {
+                return NotFound();
+            }
 
-// PUT: api/boards/5
-[HttpPut("{id}")]
-public IActionResult Put(int id, Board board)
-{
-    if (id != board.Id)
-    {
-        return BadRequest();
-    }
+            _transaction.Board.Delete(board);
+            _transaction.Save();
 
-    _transaction.Board.Update(board);
-    _transaction.Save();
-
-    return Ok();
-}
-
-// DELETE: api/boards/5
-[HttpDelete("{id}")]
-public async Task<ActionResult> Delete(int id)
-{
-    Board board = await _transaction.Board.GetById(id);
-
-    if (board == null)
-    {
-        return NotFound();
-    }
-
-    _transaction.Board.Delete(board);
-    _transaction.Save();
-
-    return Ok();
-}
-*/
+            return Ok();
+        }
+        */
     }
 }      

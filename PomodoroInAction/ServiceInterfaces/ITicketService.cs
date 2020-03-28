@@ -8,6 +8,6 @@ namespace PomodoroInAction.ServiceInterfaces
     {
         public bool CreateNewTicket(Ticket ticket);
 
-        public Task<IEnumerable<Ticket>> FetchTicketsForContainer(string containerId);
+        public Task<Ticket> GetById(int id);
     }
 }

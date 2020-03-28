@@ -36,5 +36,36 @@ namespace PomodoroInAction.Services
         {
             return await _transaction.Boards.GetKanbanBoard(id);
         }
+
+        public async Task<bool> SetSortOrderForContainers(int boardId, IEnumerable<int> orderedIds)
+        {
+            if ( !await ContainersBelongToBoard(boardId, orderedIds) )
+            {
+                return false;
+            }
+
+            int _sortPosition = 0;
+
+            foreach (int containerId in orderedIds)
+            {
+                KanbanContainer container = await _transaction.Containers.GetById(containerId);
+                container.SortOrder = _sortPosition++;
+                _transaction.Containers.Update(container);
+            }
+
+            return true;
+        }
+
+        public async Task<bool> ContainersBelongToBoard(int boardId, IEnumerable<int> containerIds)
+        {
+            foreach (int containerId in containerIds)
+            {
+                if (!await _transaction.Containers.Exists(containerId, boardId))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
