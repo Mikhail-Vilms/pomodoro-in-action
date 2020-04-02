@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PomodoroInAction.Models
 {
@@ -22,6 +24,7 @@ namespace PomodoroInAction.Models
         [Required]
         public int BoardId { get; set; }
 
+        //[JsonProperty(ReferenceLoopHandling = ReferenceLoopHandling.Ignore, IsReference = true)]
         public ICollection<Ticket> Tickets { get; set; }
     }
 }

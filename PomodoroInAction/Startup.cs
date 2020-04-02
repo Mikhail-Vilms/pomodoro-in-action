@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using PomodoroInAction.Controllers;
 using PomodoroInAction.Models;
 using PomodoroInAction.Repositories;
 using PomodoroInAction.ServiceInterfaces;
@@ -30,16 +33,32 @@ namespace PomodoroInAction
             // Injecting ApplictionSettings
             services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
 
-
             // Configuring database connection
             services.AddDbContext<PomodoroAppDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("PostgresConnection")));
 
-
             // Configuration for Identity package - providing "AppUser" as "Identity" class
             // ??? Allows to use (DI) UserManager instance in AppUserController. #TODO google it.
             services.AddIdentityCore<AppUser>().AddEntityFrameworkStores<PomodoroAppDbContext>();
-            
+
+
+            //services.AddMvc();
+
+            //services.AddControllers()
+            //    .AddNewtonsoftJson();
+
+            services.AddMvc()
+     .AddNewtonsoftJson(
+          options => {
+              options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+          });
+
+            // Enable / disable built-in ModelState validation
+            //services.Configure<ApiBehaviorOptions>(options =>
+            //{
+            //    options.SuppressModelStateInvalidFilter = true;
+            //});
+
 
             services.AddCors();
 
@@ -82,6 +101,10 @@ namespace PomodoroInAction
             services.AddScoped<IBoardService, BoardService>();
             services.AddScoped<IContainerService, ContainerService>();
             services.AddScoped<ITicketService, TicketService>();
+
+
+            services.AddScoped<ModelStateValidationActionFilterAttribute>();
+
 
             services.AddControllers();
         }

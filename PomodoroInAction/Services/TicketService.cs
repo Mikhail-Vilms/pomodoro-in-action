@@ -16,25 +16,22 @@ namespace PomodoroInAction.Services
             _transaction = transaction;
         }
 
-        public bool CreateNewTicket(Ticket ticket)
-        {
-            try
-            {
-                _transaction.Tickets.Create(ticket);
-                _transaction.Save();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                // #TODO log ex
-                return false;
-            }
-        }
-
         public async Task<Ticket> GetById(int id)
         {
             return await _transaction.Tickets.GetById(id);
+        }
+        public async Task Create(Ticket ticket)
+        {
+            await _transaction.Tickets.Create(ticket);
+        }
+        public async Task Update(Ticket ticket)
+        {
+            await _transaction.Tickets.Update(ticket);
+        }
+
+        public async Task Delete(Ticket ticket)
+        {
+            await _transaction.Tickets.Delete(ticket);
         }
     }
 }

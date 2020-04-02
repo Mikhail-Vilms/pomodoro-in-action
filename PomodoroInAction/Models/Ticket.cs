@@ -1,24 +1,31 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PomodoroInAction.Models
 {
     [Table("ticket")]
+    //[JsonObject(IsReference = true)]
     public class Ticket : BaseEntity
     {
-        [Required]
         [Column("display_name")]
+        [Required]
+        [MaxLength(127)]
         public string DisplayName { get; set; }
 
+        [Column("sort_order")]
+        [Required]
+        public int? SortOrder { get; set; }
+
         [Column("description")]
+        [MaxLength(500)]
         public string Description { get; set; }
 
-        [Required]
-        [Column("sort_order")]
-        public int SortOrder { get; set; }
-
-        [Required]
         [Column("container_id")]
-        public int KanbanContainerId { get; set; }
+        [Required]
+        public int? KanbanContainerId { get; set; }
+
+        //[JsonProperty(ReferenceLoopHandling = ReferenceLoopHandling.Ignore, IsReference = true)]
+        public KanbanContainer KanbanContainer { get; set; }
     }
 }

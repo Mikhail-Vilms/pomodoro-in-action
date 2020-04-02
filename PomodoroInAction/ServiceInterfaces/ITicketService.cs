@@ -6,8 +6,12 @@ namespace PomodoroInAction.ServiceInterfaces
 {
     public interface ITicketService
     {
-        public bool CreateNewTicket(Ticket ticket);
-
         public Task<Ticket> GetById(int id);
+
+        public Task Create(Ticket ticket);
+
+        public Task Update(Ticket ticket);
+
+        public Task Delete(Ticket ticket);
     }
 }

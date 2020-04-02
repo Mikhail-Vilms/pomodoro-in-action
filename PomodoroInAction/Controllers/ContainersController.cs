@@ -43,6 +43,40 @@ namespace PomodoroInAction.Controllers
             return Ok(container);
         }
 
+
+
+        [Authorize]
+        //[HttpPut("{id}")]
+        //public IActionResult Put(int id, [FromBody] KanbanContainer container)
+        //{
+        //    if (id != container.Id)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    _unitOfWork.Containers.Update(container);
+        //    _unitOfWork.Save();
+
+        //    return Ok();
+        //}
+
+        [Authorize]
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult> Delete(int id)
+        //{
+        //    KanbanContainer container = await _unitOfWork.Containers.GetById(id);
+
+        //    if (container == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _unitOfWork.Containers.Delete(container);
+        //    _unitOfWork.Save();
+
+        //    return Ok();
+        //}
+
         [Authorize]
         [HttpPost("{containerId}")]
         [Route("{containerId}/set_sort_order")]
@@ -59,35 +93,5 @@ namespace PomodoroInAction.Controllers
 
             return Ok();
         }
-
-        //[HttpPut("{id}")]
-        //public IActionResult Put(int id, [FromBody] KanbanContainer container)
-        //{
-        //    if (id != container.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _unitOfWork.Containers.Update(container);
-        //    _unitOfWork.Save();
-
-        //    return Ok();
-        //}
-
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    KanbanContainer container = await _unitOfWork.Containers.GetById(id);
-
-        //    if (container == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _unitOfWork.Containers.Delete(container);
-        //    _unitOfWork.Save();
-
-        //    return Ok();
-        //}
     }
 }

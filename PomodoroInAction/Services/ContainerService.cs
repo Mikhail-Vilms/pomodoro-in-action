@@ -51,7 +51,7 @@ namespace PomodoroInAction.Services
                 Ticket ticket = await _transaction.Tickets.GetById(ticketId);
                 ticket.KanbanContainerId = containerId;
                 ticket.SortOrder = _sortPosition++;
-                _transaction.Tickets.Update(ticket);
+                await _transaction.Tickets.Update(ticket);
             }
             
             return true;
