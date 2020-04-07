@@ -43,39 +43,45 @@ namespace PomodoroInAction.Controllers
             return Ok(container);
         }
 
+        [HttpPut("{id}"), ModelStateValidationActionFilter]
+        public async Task<IActionResult> Put(int id, [FromBody] KanbanContainer container)
+        {
+            if (id != container.Id)
+            {
+                return BadRequest();
+            }
 
+            KanbanContainer oldContainer = await _service.Get(id);
 
-        [Authorize]
-        //[HttpPut("{id}")]
-        //public IActionResult Put(int id, [FromBody] KanbanContainer container)
-        //{
-        //    if (id != container.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+            if (oldContainer == null)
+            {
+                return NotFound();
+            }
 
-        //    _unitOfWork.Containers.Update(container);
-        //    _unitOfWork.Save();
+            oldContainer.DisplayName = oldContainer.DisplayName;
+            oldContainer.Description = oldContainer.Description;
+            oldContainer.SortOrder = oldContainer.SortOrder;
+            oldContainer.BoardId = oldContainer.BoardId;
 
-        //    return Ok();
-        //}
+            await _service.Update(oldContainer);
 
-        [Authorize]
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    KanbanContainer container = await _unitOfWork.Containers.GetById(id);
+            return NoContent();
+        }
 
-        //    if (container == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpDelete("{id}"), Authorize]
+        public async Task<ActionResult> Delete(int id)
+        {
+            KanbanContainer container = await _service.Get(id);
 
-        //    _unitOfWork.Containers.Delete(container);
-        //    _unitOfWork.Save();
+            if (container == null)
+            {
+                return NotFound();
+            }
 
-        //    return Ok();
-        //}
+            await _service.Delete(container);
+
+            return Ok();
+        }
 
         [Authorize]
         [HttpPost("{containerId}")]

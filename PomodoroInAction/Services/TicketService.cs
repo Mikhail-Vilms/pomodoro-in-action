@@ -28,7 +28,6 @@ namespace PomodoroInAction.Services
         {
             await _transaction.Tickets.Update(ticket);
         }
-
         public async Task Delete(Ticket ticket)
         {
             await _transaction.Tickets.Delete(ticket);

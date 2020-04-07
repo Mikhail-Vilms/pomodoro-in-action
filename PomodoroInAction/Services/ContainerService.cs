@@ -42,6 +42,16 @@ namespace PomodoroInAction.Services
             throw new NotImplementedException();
         }
 
+        public async Task Update(KanbanContainer container)
+        {
+            await _transaction.Containers.Update(container);
+        }
+
+        public async Task Delete(KanbanContainer container)
+        {
+            await _transaction.Containers.Delete(container);
+        }
+
         public async Task<bool> SetSortOrderForTickets(int containerId, IEnumerable<int> sortedTicketIds)
         {
             int _sortPosition = 0;
