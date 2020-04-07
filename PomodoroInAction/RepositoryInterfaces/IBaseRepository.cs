@@ -1,15 +1,13 @@
 ﻿using PomodoroInAction.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PomodoroInAction.Repositories
 {
     public interface IBaseRepository<TEntity> where TEntity : BaseEntity
     {
-        Task<IEnumerable<TEntity>> GetAll();
+        Task Create(TEntity entityToCreate);
         Task<TEntity> GetById(int entityId);
-        void Create(TEntity entityToCreate);
-        void Update(TEntity entityToUpdate);
-        void Delete(TEntity entityToDelete);
+        Task Update(TEntity entityToUpdate);
+        Task Delete(TEntity entityToDelete);
     }
 }

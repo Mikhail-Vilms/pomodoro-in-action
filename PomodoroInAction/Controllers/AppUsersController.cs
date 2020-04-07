@@ -70,7 +70,7 @@ namespace PomodoroInAction.Controllers
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
             {
                 IssuedAt = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddMinutes(120),
+                Expires = DateTime.UtcNow.AddDays(120),
                 SigningCredentials = GetSigninCredentials(),
                 // Inside subject we need to put claims associated with the user
                 Subject = new ClaimsIdentity(new Claim[] {

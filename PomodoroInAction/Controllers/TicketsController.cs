@@ -1,7 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using PomodoroInAction.Models;
 using PomodoroInAction.Repositories;
+using PomodoroInAction.ServiceInterfaces;
+using PomodoroInAction.Services;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace PomodoroInAction.Controllers
@@ -10,24 +16,36 @@ namespace PomodoroInAction.Controllers
     [ApiController]
     public class TicketsController : ControllerBase
     {
-        private readonly IDBTransaction _unitOfWork;
+        private readonly ITicketService _service;
+        private readonly ILogger _logger;
 
-        public TicketsController(IDBTransaction unitOfWork)
+        public TicketsController(ITicketService service, ILoggerFactory loggerFactory)
         {
-            _unitOfWork = unitOfWork;
+            _service = service;
+            _logger = loggerFactory.CreateLogger("PomodoroInAction.Controllers.TicketsController");
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetAll()
+        [AllowAnonymous]
+        [ModelStateValidationActionFilter]
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<Ticket>> Post([FromBody]Ticket ticket)
         {
-            IEnumerable<Ticket> containers = await _unitOfWork.Tickets.GetAll();
-            return Ok(containers);
+            //ICollection<ValidationResult> results = new List<ValidationResult>(); // Will contain the results of the validation
+            
+            //bool isValid = Validator.TryValidateObject(ticket, new ValidationContext(ticket), results, true); // Validates the object and its properties using the previously created context.
+
+            bool isValid = ModelState.IsValid;
+
+            await _service.Create(ticket);
+            
+            return CreatedAtAction(nameof(Get), new { id = ticket.Id }, ticket);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize]
         public async Task<ActionResult<Ticket>> Get(int id)
         {
-            Ticket ticket = await _unitOfWork.Tickets.GetById(id);
+            Ticket ticket = await _service.GetById(id);
 
             if (ticket == null)
             {
@@ -37,41 +55,42 @@ namespace PomodoroInAction.Controllers
             return Ok(ticket);
         }
 
-        [HttpPost]
-        public ActionResult<Ticket> Post([FromBody] Ticket ticket)
-        {
-            _unitOfWork.Tickets.Create(ticket);
-            _unitOfWork.Save();
-
-            return CreatedAtAction(nameof(Get), new { id = ticket.Id }, ticket);
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Ticket ticket)
+        [HttpPut("{id}"), ModelStateValidationActionFilter]
+        public async Task<IActionResult> Put(int id, [FromBody] Ticket ticket)
         {
             if (id != ticket.Id)
             {
                 return BadRequest();
             }
 
-            _unitOfWork.Tickets.Update(ticket);
-            _unitOfWork.Save();
+            Ticket oldTicket = await _service.GetById(id);
 
-            return Ok();
+            if (oldTicket == null)
+            {
+                return NotFound();
+            }
+
+            oldTicket.DisplayName = ticket.DisplayName;
+            oldTicket.Description = ticket.Description;
+            oldTicket.SortOrder = ticket.SortOrder;
+            oldTicket.KanbanContainerId = ticket.KanbanContainerId;
+
+            await _service.Update(oldTicket);
+
+            return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public async Task<ActionResult> Delete(int id)
         {
-            Ticket ticket = await _unitOfWork.Tickets.GetById(id);
+            Ticket ticket = await _service.GetById(id);
 
             if (ticket == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.Tickets.Delete(ticket);
-            _unitOfWork.Save();
+            await _service.Delete(ticket);
 
             return Ok();
         }

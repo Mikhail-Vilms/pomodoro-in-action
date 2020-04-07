@@ -7,7 +7,7 @@ namespace PomodoroInAction.Models
     {
         [Column("id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Required]
+        [Key]
         public int Id { get; set; }
     }
 }

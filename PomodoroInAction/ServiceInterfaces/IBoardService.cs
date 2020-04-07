@@ -9,5 +9,9 @@ namespace PomodoroInAction.ServiceInterfaces
         public void CreateNewBoard(Board board, string userId);
 
         public Task<IEnumerable<Board>> GetPersonalBoards(string userId);
+
+        public Task<Board> GetKanbanBoard(int id);
+
+        public Task<bool> SetSortOrderForContainers(int boardId, IEnumerable<int> orderedIds);
     }
 }

@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PomodoroInAction.Models;
 using PomodoroInAction.Repositories;
+using PomodoroInAction.ServiceInterfaces;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace PomodoroInAction.Controllers
@@ -10,68 +13,89 @@ namespace PomodoroInAction.Controllers
     [ApiController]
     public class ContainersController : ControllerBase
     {
-        private readonly IDBTransaction _unitOfWork;
+        private readonly IContainerService _service;
 
-        public ContainersController(IDBTransaction unitOfWork)
+        public ContainersController(IContainerService service)
         {
-            _unitOfWork = unitOfWork;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<KanbanContainer>>> GetAll()
-        {
-            IEnumerable<KanbanContainer> containers = await _unitOfWork.Containers.GetAll();
-            return Ok(containers);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<KanbanContainer>> Get(int id)
-        {
-            KanbanContainer container = await _unitOfWork.Containers.GetById(id);
-
-            if (container == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(container);
+            _service = service;
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult<KanbanContainer> Post([FromBody] KanbanContainer container)
         {
-            _unitOfWork.Containers.Create(container);
-            _unitOfWork.Save();
-
-            return CreatedAtAction(nameof(Get), new { id = container.Id }, container);
+            if (_service.Create(container))
+            {
+                return CreatedAtAction(nameof(GetContainer), new { id = container.Id }, container);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] KanbanContainer container)
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Board>> GetContainer(int id)
+        {
+            //string userId = User.Claims.First(c => c.Type == "UserID").Value;
+            KanbanContainer container = await _service.Get(id);
+            return Ok(container);
+        }
+
+        [HttpPut("{id}"), ModelStateValidationActionFilter]
+        public async Task<IActionResult> Put(int id, [FromBody] KanbanContainer container)
         {
             if (id != container.Id)
             {
                 return BadRequest();
             }
 
-            _unitOfWork.Containers.Update(container);
-            _unitOfWork.Save();
+            KanbanContainer oldContainer = await _service.Get(id);
 
-            return Ok();
+            if (oldContainer == null)
+            {
+                return NotFound();
+            }
+
+            oldContainer.DisplayName = oldContainer.DisplayName;
+            oldContainer.Description = oldContainer.Description;
+            oldContainer.SortOrder = oldContainer.SortOrder;
+            oldContainer.BoardId = oldContainer.BoardId;
+
+            await _service.Update(oldContainer);
+
+            return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public async Task<ActionResult> Delete(int id)
         {
-            KanbanContainer container = await _unitOfWork.Containers.GetById(id);
+            KanbanContainer container = await _service.Get(id);
 
             if (container == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.Containers.Delete(container);
-            _unitOfWork.Save();
+            await _service.Delete(container);
+
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("{containerId}")]
+        [Route("{containerId}/set_sort_order")]
+        public async Task<ActionResult> SetSortOrderForTickets(
+            int containerId,
+            [FromBody] IEnumerable<int> sortedTicketIds)
+        {
+            //string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+            if (!await _service.SetSortOrderForTickets(containerId, sortedTicketIds))
+            {
+                return BadRequest("Error while setting sort order for tickets");
+            }
 
             return Ok();
         }

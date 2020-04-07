@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PomodoroInAction.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PomodoroInAction.Repositories
@@ -17,37 +16,27 @@ namespace PomodoroInAction.Repositories
             this._dbSet = _dbContext.Set<TEntity>();
         }
 
-        public virtual void Create(TEntity entity)
-        {
-            _dbSet.Add(entity);
-            _dbContext.SaveChanges();
-        }
-
-        public async virtual Task<IEnumerable<TEntity>> GetAll()
-        {
-            return await _dbSet.ToListAsync();
-        }
-
         public async virtual Task<TEntity> GetById(int id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public virtual void Update(TEntity entityToUpdate)
+        public async virtual Task Create(TEntity entityToCreate)
         {
-            _dbSet.Attach(entityToUpdate);
-            _dbContext.Entry(entityToUpdate).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            _dbSet.Add(entityToCreate);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public virtual void Delete(TEntity entityToDelete)
+        public async virtual Task Update(TEntity entityToUpdate)
         {
-            if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
-            {
-                _dbSet.Attach(entityToDelete);
-            }
+            _dbSet.Update(entityToUpdate);
+            await _dbContext.SaveChangesAsync();
+        }
 
+        public async virtual Task Delete(TEntity entityToDelete)
+        {
             _dbSet.Remove(entityToDelete);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using PomodoroInAction.Models;
+﻿using System.Threading.Tasks;
+using PomodoroInAction.Models;
 using PomodoroInAction.RepositoryInterfaces;
 
 namespace PomodoroInAction.Repositories
@@ -7,6 +8,13 @@ namespace PomodoroInAction.Repositories
     {
         public ContainerRepository(PomodoroAppDbContext dbContext) : base(dbContext)
         {
+        }
+
+        public async Task<bool> Exists(int containerId, int boardId)
+        {
+            KanbanContainer container = await _dbSet.FindAsync(containerId);
+
+            return container != null && container.BoardId.Equals(boardId);
         }
     }
 }
